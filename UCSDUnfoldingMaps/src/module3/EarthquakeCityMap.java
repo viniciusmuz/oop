@@ -24,7 +24,7 @@ import parsing.ParseFeed;
 /** EarthquakeCityMap
  * An application with an interactive map displaying earthquake data.
  * Author: UC San Diego Intermediate Software Development MOOC team
- * @author Your name here
+ * @author Vinicius Xavier
  * Date: July 17, 2015
  * */
 public class EarthquakeCityMap extends PApplet {
@@ -35,10 +35,19 @@ public class EarthquakeCityMap extends PApplet {
 	// IF YOU ARE WORKING OFFLINE, change the value of this variable to true
 	private static final boolean offline = false;
 	
-	// Less than this threshold is a light earthquake
+	// Threshold, color and radius for moderate earthquakes.
 	public static final float THRESHOLD_MODERATE = 5;
-	// Less than this threshold is a minor earthquake
+	public final int COLOR_MODERATE = color(255, 0, 0);
+	public final int RADIUS_MODERATE = 20;
+
+	// Threshold, color and radius for light earthquakes.
 	public static final float THRESHOLD_LIGHT = 4;
+	public final int COLOR_LIGHT = color(255, 255, 0);
+	public final int RADIUS_LIGHT = 15;
+
+	// Color and radius for minor earthquakes.
+	public final int COLOR_MINOR = color(220, 220, 255);
+	public final int RADIUS_MINOR = 10;
 
 	/** This is where to find the local tiles, for working without an Internet connection */
 	public static String mbTilesString = "blankLight-1-3.mbtiles";
@@ -51,14 +60,14 @@ public class EarthquakeCityMap extends PApplet {
 
 	
 	public void setup() {
-		size(950, 600, OPENGL);
+		size(900, 700, OPENGL);
 
 		if (offline) {
-		    map = new UnfoldingMap(this, 200, 50, 700, 500, new MBTilesMapProvider(mbTilesString));
+		    map = new UnfoldingMap(this, 0, 120, 900, 580, new MBTilesMapProvider(mbTilesString));
 		    earthquakesURL = "2.5_week.atom"; 	// Same feed, saved Aug 7, 2015, for working offline
 		}
 		else {
-			map = new UnfoldingMap(this, 200, 50, 700, 500, new Google.GoogleMapProvider());
+			map = new UnfoldingMap(this, 0, 120, 900, 580, new Google.GoogleMapProvider());
 			// IF YOU WANT TO TEST WITH A LOCAL FILE, uncomment the next line
 			//earthquakesURL = "2.5_week.atom";
 		}
@@ -77,7 +86,9 @@ public class EarthquakeCityMap extends PApplet {
 	    // to create a new SimplePointMarker for each PointFeature in 
 	    // earthquakes.  Then add each new SimplePointMarker to the 
 	    // List markers (so that it will be added to the map in the line below)
-	    
+	    for (PointFeature earthquake : earthquakes) {
+			markers.add(this.createMarker(earthquake));
+		}
 	    
 	    // Add the markers to the map so that they are displayed
 	    map.addMarkers(markers);
@@ -105,10 +116,6 @@ public class EarthquakeCityMap extends PApplet {
 		Object magObj = feature.getProperty("magnitude");
 		float mag = Float.parseFloat(magObj.toString());
 		
-		// Here is an example of how to use Processing's color method to generate 
-	    // an int that represents the color yellow.  
-	    int yellow = color(255, 255, 0);
-		
 		// TODO (Step 4): Add code below to style the marker's size and color 
 	    // according to the magnitude of the earthquake.  
 	    // Don't forget about the constants THRESHOLD_MODERATE and 
@@ -116,7 +123,18 @@ public class EarthquakeCityMap extends PApplet {
 	    // Rather than comparing the magnitude to a number directly, compare 
 	    // the magnitude to these variables (and change their value in the code 
 	    // above if you want to change what you mean by "moderate" and "light")
-	    
+	    if (mag >= THRESHOLD_MODERATE) {
+			marker.setColor(COLOR_MODERATE);
+			marker.setRadius(RADIUS_MODERATE);
+		}
+		else if (mag >= THRESHOLD_LIGHT) {
+			marker.setColor(COLOR_LIGHT);
+			marker.setRadius(RADIUS_LIGHT);
+		}
+		else {
+			marker.setColor(COLOR_MINOR);
+			marker.setRadius(RADIUS_MINOR);
+		}
 	    
 	    // Finally return the marker
 	    return marker;
@@ -132,8 +150,34 @@ public class EarthquakeCityMap extends PApplet {
 	// helper method to draw key in GUI
 	// TODO: Implement this method to draw the key
 	private void addKey() 
-	{	
-		// Remember you can use Processing's graphics methods here
-	
+	{
+		// Draws the rectangle.
+		fill(50, 50, 50);
+		rect(10, 10, width - 20, 100, 20);
+
+		// Draws the markers.
+		int yMarkerPosition = 80;
+
+		fill(COLOR_MODERATE);
+		int xModeratePosition = 25;
+		ellipse(xModeratePosition, yMarkerPosition, RADIUS_MODERATE, RADIUS_MODERATE);
+
+		fill(COLOR_LIGHT);
+		float xLightPosition = (width / 2) - 100;
+		ellipse(xLightPosition, yMarkerPosition, RADIUS_LIGHT, RADIUS_LIGHT);
+
+		fill(COLOR_MINOR);
+		float xMinorPosition = width - 175;
+		ellipse(xMinorPosition, yMarkerPosition, RADIUS_MINOR, RADIUS_MINOR);
+
+		// Draws the text.
+		fill(color(255,255,255));
+		textSize(14);
+		text("5.0+ magnitude", xModeratePosition + 25, yMarkerPosition + 5);
+		text("4.0+ magnitude", xLightPosition + 25, yMarkerPosition + 5);
+		text("Below 4.0 magnitude", xMinorPosition + 25, yMarkerPosition + 5);
+
+		textSize(28);
+		text("Earthquake Key", (width / 2) - 110, 40);
 	}
 }
