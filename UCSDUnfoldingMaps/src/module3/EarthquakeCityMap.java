@@ -82,10 +82,7 @@ public class EarthquakeCityMap extends PApplet {
 	    //PointFeatures have a getLocation method
 	    List<PointFeature> earthquakes = ParseFeed.parseEarthquake(this, earthquakesURL);
 	    
-	    //TODO (Step 3): Add a loop here that calls createMarker (see below) 
-	    // to create a new SimplePointMarker for each PointFeature in 
-	    // earthquakes.  Then add each new SimplePointMarker to the 
-	    // List markers (so that it will be added to the map in the line below)
+	    // Creates a marker for each earthquake in earthquakes.
 	    for (PointFeature earthquake : earthquakes) {
 			markers.add(this.createMarker(earthquake));
 		}
@@ -94,35 +91,17 @@ public class EarthquakeCityMap extends PApplet {
 	    map.addMarkers(markers);
 	}
 		
-	/* createMarker: A suggested helper method that takes in an earthquake 
-	 * feature and returns a SimplePointMarker for that earthquake
-	 * 
-	 * In step 3 You can use this method as-is.  Call it from a loop in the 
-	 * setp method.  
-	 * 
-	 * TODO (Step 4): Add code to this method so that it adds the proper 
-	 * styling to each marker based on the magnitude of the earthquake.  
-	*/
+	/* Takes in an earthquake feature and returns a SimplePointMarker for that earthquake.
+	 */
 	private SimplePointMarker createMarker(PointFeature feature)
-	{  
-		// To print all of the features in a PointFeature (so you can see what they are)
-		// uncomment the line below.  Note this will only print if you call createMarker 
-		// from setup
-		//System.out.println(feature.getProperties());
-		
+	{
 		// Create a new SimplePointMarker at the location given by the PointFeature
 		SimplePointMarker marker = new SimplePointMarker(feature.getLocation());
 		
 		Object magObj = feature.getProperty("magnitude");
 		float mag = Float.parseFloat(magObj.toString());
-		
-		// TODO (Step 4): Add code below to style the marker's size and color 
-	    // according to the magnitude of the earthquake.  
-	    // Don't forget about the constants THRESHOLD_MODERATE and 
-	    // THRESHOLD_LIGHT, which are declared above.
-	    // Rather than comparing the magnitude to a number directly, compare 
-	    // the magnitude to these variables (and change their value in the code 
-	    // above if you want to change what you mean by "moderate" and "light")
+
+		// Add style to the created marker, according to its intensity.
 	    if (mag >= THRESHOLD_MODERATE) {
 			marker.setColor(COLOR_MODERATE);
 			marker.setRadius(RADIUS_MODERATE);
@@ -147,8 +126,7 @@ public class EarthquakeCityMap extends PApplet {
 	}
 
 
-	// helper method to draw key in GUI
-	// TODO: Implement this method to draw the key
+	// Draw key in the GUI.
 	private void addKey() 
 	{
 		// Draws the rectangle.
@@ -177,6 +155,7 @@ public class EarthquakeCityMap extends PApplet {
 		text("4.0+ magnitude", xLightPosition + 25, yMarkerPosition + 5);
 		text("Below 4.0 magnitude", xMinorPosition + 25, yMarkerPosition + 5);
 
+		// Draws the title.
 		textSize(28);
 		text("Earthquake Key", (width / 2) - 110, 40);
 	}
