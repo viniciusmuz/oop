@@ -82,7 +82,7 @@ public class EarthquakeCityMap extends PApplet {
 		//earthquakesURL = "test2.atom";
 		
 		// WHEN TAKING THIS QUIZ: Uncomment the next line
-		//earthquakesURL = "quiz1.atom";
+		earthquakesURL = "quiz1.atom";
 		
 		
 		// (2) Reading in earthquake data and geometric properties
@@ -132,28 +132,44 @@ public class EarthquakeCityMap extends PApplet {
 	}
 	
 	// helper method to draw key in GUI
-	// TODO: Update this method as appropriate
 	private void addKey() {	
 		// Remember you can use Processing's graphics methods here
 		fill(255, 250, 240);
-		rect(25, 50, 150, 250);
+		rect(25, 50, 150, 300);
 		
 		fill(0);
 		textAlign(LEFT, CENTER);
 		textSize(12);
 		text("Earthquake Key", 50, 75);
-		
-		fill(color(255, 0, 0));
-		ellipse(50, 125, 15, 15);
+
+		// city, land and ocean marker
+		triangle(43, 120, 49, 107, 55, 120);
+		fill(255,255,255);
+		rect(43, 135, 13, 13);
+		ellipse(50, 170, 15, 15);
+
+		// depth markers
 		fill(color(255, 255, 0));
-		ellipse(50, 175, 10, 10);
+		ellipse(50, 240, 15, 15);
 		fill(color(0, 0, 255));
-		ellipse(50, 225, 5, 5);
-		
+		ellipse(50, 270, 15, 15);
+		fill(color(255, 0, 0));
+		ellipse(50, 300, 15, 15);
+		fill(color(255,255,255));
+		ellipse(50, 330, 15, 15);
+		line(35, 315, 65, 345);
+		line(65, 315, 35, 345);
+
+		// text
 		fill(0, 0, 0);
-		text("5.0+ Magnitude", 75, 125);
-		text("4.0+ Magnitude", 75, 175);
-		text("Below 4.0", 75, 225);
+		text("City Marker", 75, 110);
+		text("Land Quake", 75, 140);
+		text("Ocean Quake", 75, 170);
+		text("Size ~ Magnitude", 40, 200);
+		text("Shallow", 75, 240);
+		text("Intermediate", 75, 270);
+		text("Deep", 75, 300);
+		text("Past Day", 75, 330);
 	}
 
 	
@@ -192,9 +208,7 @@ public class EarthquakeCityMap extends PApplet {
 		String output = "";
 
 		for (Marker m : quakeMarkers) {
-			if (m instanceof OceanQuakeMarker) {
-				oceanQuakeCounter++;
-			}
+			if (m instanceof OceanQuakeMarker) oceanQuakeCounter++;
 			else {
 				String country = ((LandQuakeMarker)m).getCountry();
 				if (landQuakeCounter.containsKey(country)) {
@@ -206,13 +220,9 @@ public class EarthquakeCityMap extends PApplet {
 			}
 		}
 
-		for (String country : landQuakeCounter.keySet()) {
-			output += country + ": " + landQuakeCounter.get(country) + "\n";
-		}
+		for (String country : landQuakeCounter.keySet()) output += country + ": " + landQuakeCounter.get(country) + "\n";
 
-		output += "...\n";
-		output += "OCEAN QUAKES: " + oceanQuakeCounter;
-
+		output += "...\nOCEAN QUAKES: " + oceanQuakeCounter;
 		System.out.println(output);
 	}
 	
